@@ -60,7 +60,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.["rinkeby"]; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -484,7 +484,7 @@ function App(props) {
   const [tokenBuyAmount, setTokenBuyAmount] = useState();
 
   const ethCostToPurchaseTokens =
-    tokenBuyAmount && tokensPerEth && parseEther("" + tokenBuyAmount / parseFloat(tokensPerEth));
+    tokenBuyAmount && tokensPerEth && ethers.utils.parseEther("" + tokenBuyAmount / parseFloat(tokensPerEth));
   console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
 
   const [tokenSendToAddress, setTokenSendToAddress] = useState();
@@ -521,7 +521,7 @@ function App(props) {
             <Button
               type={"primary"}
               onClick={() => {
-                tx(writeContracts.YourToken.transfer(tokenSendToAddress, parseEther("" + tokenSendAmount)));
+                tx(writeContracts.YourToken.transfer(tokenSendToAddress, ethers.utils.parseEther("" + tokenSendAmount)));
               }}
             >
               Send Tokens
@@ -621,10 +621,10 @@ function App(props) {
                 renderItem={item => {
                   return (
                     <List.Item key={item[0] + item[1] + item.blockNumber}>
-                      <Address value={item[0]} ensProvider={mainnetProvider} fontSize={16} /> paid
-                      <Balance balance={item[1]} />
+                      <Address value={item.args[0]} ensProvider={mainnetProvider} fontSize={16} /> paid
+                      <Balance balance={item.args[1]} />
                       ETH to get
-                      <Balance balance={item[2]} />
+                      <Balance balance={item.args[2]} />
                       Tokens
                     </List.Item>
                   );

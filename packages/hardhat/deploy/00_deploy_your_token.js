@@ -8,12 +8,32 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await deploy("YourToken", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    //args: [ "Hello", ethers.utils.parseEther("1.5") ],
+    // args: [ "Hello", ethers.utils.parseEther("1.5") ],
+    args: [ethers.utils.parseEther("1000") ],
+
     log: true,
   });
 
   //Todo: transfer tokens to frontend address
-  // const yourToken = await deployments.get("YourToken");
+  const yourToken = await deployments.get("YourToken");
+  const token = await ethers.getContractAt("YourToken", yourToken.address);
+  // const result = await token.transfer( "0x9E7C593CCf40aB030bfb08D816505B8B55B20712", ethers.utils.parseEther("1000") );
+
+
+  // deploy() does not return contract instance. so you need 
+  // 1. const Con = await deployments.get(“YourToken”)  
+  // 2. const token = await ethers.getContractAt(“YourToken”, Con.address) 
+  // 3. token.transfer()    
+  // 1. can be await.deploy(….), in that case 2 and 3 will stay the same
+  //    getContractAt is the missing step, that’s why the transfer() error
+  
+  // This is an issue that I needed to work around also.
+  // I ended up replacing the declaration for YourToken with:
+  // const yourToken = await ethers.getContract("YourToken", deployer);
+
+  // And for the Vendor with:
+  // const Vendor = await deployments.get("Vendor");
+  // const vendor = await ethers.getContract("Vendor", deployer);
 
   /*
     // Getting a previously deployed contract
