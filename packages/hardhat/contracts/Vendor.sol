@@ -28,7 +28,8 @@ contract Vendor is Ownable{
   function sellTokens(uint256 amountOfTokens) 
     public {
       require(amountOfTokens > 0, "Insufficient tokens!");
-      require(yourToken.allowance(msg.sender, address(this)) >= amountOfTokens, "Token allowance too low!");
+      // yourToken.approve(address(this), amountOfTokens);
+      require(yourToken.allowance(msg.sender, address(this)) >= amountOfTokens, "Approve Token with correct allowance!");
       uint256 soldAmount = amountOfTokens.div(tokensPerEth);
       bool sent = yourToken.transferFrom(msg.sender, address(this), amountOfTokens);
       require(sent, "Token transfer failed!");
@@ -45,6 +46,7 @@ contract Vendor is Ownable{
       msg.sender.transfer(address(this).balance);
   }
 
+  // function deposit() public payable {}
   //use the Ownable.sol import above:
    
   // function transferOwnership(address account)

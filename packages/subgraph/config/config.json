@@ -1,6 +1,6 @@
 {
-  "localhost_YourTokenAddress": "0xc0F115A19107322cFBf1cDBC7ea011C19EbDB4F8",
-  "localhost_VendorAddress": "0xab16A69A5a8c12C732e0DEFF4BE56A70bb64c926",
-  "rinkeby_VendorAddress": "0x6ed7A6687194Ed6C617341039B5634B526E46F77",
-  "rinkeby_YourTokenAddress": "0x9B624848D56E240F80b759ef50c8176ec43b529B"
+  "localhost_YourTokenAddress": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+  "localhost_VendorAddress": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+  "rinkeby_VendorAddress": "0x1BFf97F56bAd499CD455142aF8C26A88873e8348",
+  "rinkeby_YourTokenAddress": "0x1170A3D3c0Fa8bb852E0d334129b205aB4961010"
 }

@@ -487,10 +487,22 @@ function App(props) {
     tokenBuyAmount && tokensPerEth && ethers.utils.parseEther("" + tokenBuyAmount / parseFloat(tokensPerEth));
   console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
 
+
+  const sellTokensEvents = useEventListener(readContracts, "Vendor", "SellTokens", localProvider, 1);
+  console.log("📟 sellTokensEvents:", sellTokensEvents);
+
+  const [tokenSellAmount, setTokenSellAmount] = useState();
+
+  const ethCostToSellTokens =
+  tokenSellAmount && tokensPerEth && ethers.utils.parseEther("" + tokenSellAmount / parseFloat(tokensPerEth));
+  console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
+
   const [tokenSendToAddress, setTokenSendToAddress] = useState();
   const [tokenSendAmount, setTokenSendAmount] = useState();
 
   const [buying, setBuying] = useState();
+  const [approve, setApprove] = useState();
+  const [selling, setSelling] = useState();
 
   let transferDisplay = "";
   if (yourTokenBalance) {
@@ -604,6 +616,52 @@ function App(props) {
               </Card>
             </div>
 
+            <Divider />
+            <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
+              <Card title="Sell Tokens" extra={<a href="#">code</a>}>
+                <div style={{ padding: 8 }}>{tokensPerEth && tokensPerEth.toNumber()} tokens per ETH</div>
+
+                <div style={{ padding: 8 }}>
+                  <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"amount of tokens to sell"}
+                    value={tokenSellAmount}
+                    onChange={e => {
+                      setTokenSellAmount(e.target.value);
+                    }}
+                  />
+                  <Balance balance={ethCostToSellTokens} dollarMultiplier={price} />
+                </div>
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={approve}
+                    onClick={async () => {
+                      setApprove(true);
+                      await tx(writeContracts.YourToken.approve(vendorAddress, ethers.utils.parseEther("" + tokenSellAmount)));
+                      setApprove(false);
+                    }}
+                  >
+                    Approve Tokens
+                  </Button>
+                </div>
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={selling}
+                    onClick={async () => {
+                      setSelling(true);
+                      await tx(writeContracts.Vendor.sellTokens(ethers.utils.parseEther("" + tokenSellAmount)));
+                      setSelling(false);
+                      // setApprove(false);
+                    }}
+                  >
+                    Sell Tokens
+                  </Button>
+                </div>
+              </Card>
+            </div>
+            <Divider />
             <div style={{ padding: 8, marginTop: 32 }}>
               <div>Vendor Token Balance:</div>
               <Balance balance={vendorTokenBalance} fontSize={64} />
@@ -626,6 +684,24 @@ function App(props) {
                       ETH to get
                       <Balance balance={item.args[2]} />
                       Tokens
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+
+            <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
+              <div>Sell Token Events:</div>
+              <List
+                dataSource={sellTokensEvents}
+                renderItem={item => {
+                  return (
+                    <List.Item key={item[0] + item[1] + item.blockNumber + Math.random()}>
+                      <Address value={item.args[0]} ensProvider={mainnetProvider} fontSize={16} /> sold
+                      <Balance balance={item.args[1]} />
+                      Tokens to get
+                      <Balance balance={item.args[2]} />
+                      ETH
                     </List.Item>
                   );
                 }}
