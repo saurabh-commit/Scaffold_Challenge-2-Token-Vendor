@@ -504,6 +504,8 @@ function App(props) {
   const [approve, setApprove] = useState();
   const [selling, setSelling] = useState();
 
+  const [isShow, setIsShow] = useState(false);
+
   let transferDisplay = "";
   if (yourTokenBalance) {
     transferDisplay = (
@@ -640,25 +642,33 @@ function App(props) {
                       setApprove(true);
                       await tx(writeContracts.YourToken.approve(vendorAddress, ethers.utils.parseEther("" + tokenSellAmount)));
                       setApprove(false);
+                      setIsShow(!isShow);
                     }}
                   >
                     Approve Tokens
                   </Button>
                 </div>
-                <div style={{ padding: 8 }}>
-                  <Button
-                    type={"primary"}
-                    loading={selling}
-                    onClick={async () => {
-                      setSelling(true);
-                      await tx(writeContracts.Vendor.sellTokens(ethers.utils.parseEther("" + tokenSellAmount)));
-                      setSelling(false);
-                      // setApprove(false);
-                    }}
-                  >
-                    Sell Tokens
-                  </Button>
-                </div>
+                {isShow ?
+                (
+                  <>
+                  <div style={{ padding: 8 }}>
+                    <Button
+                      type={"primary"}
+                      loading={selling}
+                      onClick={async () => {
+                        setSelling(true);
+                        await tx(writeContracts.Vendor.sellTokens(ethers.utils.parseEther("" + tokenSellAmount)));
+                        setSelling(false);
+                        setIsShow(!isShow);
+                        // setApprove(false);
+                      }}
+                    >
+                      Sell Tokens
+                    </Button>
+                  </div>
+                  </>
+                  ) : null
+                }
               </Card>
             </div>
             <Divider />
